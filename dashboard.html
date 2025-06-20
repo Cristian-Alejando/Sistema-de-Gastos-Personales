@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Gastos</title>
+  <style>
+    .table-bordered {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .table-bordered, .table-bordered th, .table-bordered td {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bienvenido</h1>
+  <p id="usuario-email"></p>
+  <button id="logout">Cerrar sesión</button>
+
+  <h2>Agregar Gasto</h2>
+  <form id="form-gasto">
+    <input type="text" id="descripcion" placeholder="Descripción" required>
+    <input type="number" id="monto" placeholder="Monto" required>
+    <input type="date" id="fecha" required>
+    <select id="categoria" required>
+      <option value="">Selecciona categoría</option>
+    </select>
+    <button type="submit">Guardar Gasto</button>
+  </form>
+
+  <p id="mensaje-gasto"></p>
+
+  <h2>Mis gastos</h2>
+  <table class="table-bordered">
+    <thead>
+      <tr>
+        <th>Descripción</th>
+        <th>Monto</th>
+        <th>Fecha</th>
+        <th>Categoría</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-gastos">
+      <!-- Los gastos se insertan aquí -->
+    </tbody>
+  </table>
+
+  <script type="module" src="./js/firebase-config.js"></script>
+  <script type="module" src="./js/dashboard.js"></script>
+</body>
+</html>

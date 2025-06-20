@@ -1,0 +1,25 @@
+<!-- registro.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gastos App - Registro</title>
+</head>
+<body>
+  <h1>Crear una cuenta</h1>
+
+  <form id="registro-form">
+    <input type="email" id="registro-email" placeholder="Correo electrónico" required />
+    <input type="password" id="registro-password" placeholder="Contraseña" required />
+    <button type="submit">Registrarse</button>
+  </form>
+
+  <p id="mensaje-registro"></p>
+
+  <p>¿Ya tienes una cuenta? <a href="index.html">Inicia sesión</a></p>
+
+  <!-- Firebase y lógica -->
+  <script type="module" src="./js/firebase-config.js"></script>
+  <script type="module" src="./js/registro.js"></script>
+</body>
+</html>
