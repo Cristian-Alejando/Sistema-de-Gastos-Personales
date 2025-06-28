@@ -1,0 +1,29 @@
+{
+  "usuarios": {
+    "{uid}": {
+      "email": "string",
+      "creadoEn": "ISODate (string)",
+      "categorias": {
+        "gasto": {
+          "{categoriaId}": {
+            "nombre": "string"
+          }
+        },
+        "ingreso": {
+          "{categoriaId}": {
+            "nombre": "string"
+          }
+        }
+      },
+      "movimientos": {
+        "{movimientoId}": {
+          "descripcion": "string",
+          "monto": "number",
+          "fecha": "string (yyyy-mm-dd)",
+          "categoria": "string",
+          "tipo": "string (Gasto o Ingreso)"
+        }
+      }
+    }
+  }
+}
