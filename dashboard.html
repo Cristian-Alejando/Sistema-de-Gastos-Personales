@@ -11,6 +11,16 @@
     .table-bordered, .table-bordered th, .table-bordered td {
       border: 1px solid black;
     }
+      .grafico-wrapper {
+    max-width: 50%;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .grafico-wrapper {
+      max-width: 100%;
+    }
+  }
   </style>
 </head>
 <body>
@@ -31,6 +41,29 @@
 
   <p id="mensaje-gasto"></p>
 
+  <!-- Filtros -->
+<section id="filtros" class="mb-4">
+<label for="filtro-fecha-inicio">Desde:</label>
+<input type="date" id="filtro-fecha-inicio" />
+
+<label for="filtro-fecha-fin">Hasta:</label>
+<input type="date" id="filtro-fecha-fin" />
+
+<label for="filtro-tipo">Tipo:</label>
+<select id="filtro-tipo">
+  <option value="">Todos</option>
+  <option value="Gasto">Gasto</option>
+  <option value="Ingreso">Ingreso</option>
+</select>
+
+<label for="filtro-categoria">Categoría:</label>
+<select id="filtro-categoria">
+  <option value="">Todas</option>
+</select>
+
+<button id="btn-aplicar-filtros">Aplicar Filtros</button>
+</section>
+
   <h2>Mis gastos</h2>
   <table class="table-bordered">
     <thead>
@@ -45,6 +78,19 @@
       <!-- Los gastos se insertan aquí -->
     </tbody>
   </table>
+
+  <section id="resumen-mensual" class="resumen-dashboard">
+  <!-- Aquí se renderiza el resumen -->
+</section>
+
+<section class="grafico-container">
+  <h2>Gráfico de gastos por categoría (mes actual)</h2>
+  <div class="grafico-wrapper">
+    <canvas id="grafico-categorias"></canvas>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="module" src="../presentation/dashboard.js"></script>
 </body>
 </html>

@@ -3,10 +3,13 @@ import {
   cerrarSesion,
   guardarGasto,
   cargarGastos,
-  obtenerCategorias
+  obtenerCategorias,
+  calcularTotalesMensuales,
 } from '../services/dashboardService.js';
 
 let usuarioActual = null;
+let graficoCategorias = null;
+let ultimaConfigGrafico = null;
 
 document.getElementById('logout').addEventListener('click', cerrarSesion);
 
@@ -17,6 +20,14 @@ document.getElementById('form-gasto').addEventListener('submit', async (e) => {
   const descripcion = document.getElementById('descripcion').value.trim();
   const monto = parseFloat(document.getElementById('monto').value);
   const fecha = document.getElementById('fecha').value;
+ 
+  const fechaValida = !isNaN(Date.parse(fecha)) && new Date(fecha) <= new Date();
+
+if (!descripcion || isNaN(monto) || monto <= 0 || !fechaValida) {
+  mensaje.textContent = 'Por favor ingresa un monto positivo o fecha válida.';
+  return;
+}
+
   const categoriaNombre = document.getElementById('categoria').value;
   const tipo = document.getElementById('categoria').selectedOptions[0]?.dataset.tipo;
 
@@ -59,6 +70,10 @@ inicializarDashboard(async (user) => {
 
   const categorias = await obtenerCategorias(user.uid);
   renderizarCategorias(categorias);
+  
+  const totales = await calcularTotalesMensuales(user.uid);
+  renderizarTotalesMensuales(totales);
+  renderizarGraficoCategorias(totales);
 });
 
 function renderizarMovimientos(movimientos) {
@@ -108,6 +123,99 @@ function renderizarCategorias(categorias) {
   editarOption.value = 'editar';
   editarOption.textContent = '➕ Editar categorías...';
   select.appendChild(editarOption);
+
+  // También llena el filtro de categoría
+const filtroSelect = document.getElementById('filtro-categoria');
+if (filtroSelect) {
+  filtroSelect.innerHTML = '<option value="">Todas</option>';
+  categorias.gasto.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat.nombre;
+    option.textContent = `${cat.nombre} (Gasto)`;
+    filtroSelect.appendChild(option);
+  });
+
+  categorias.ingreso.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat.nombre;
+    option.textContent = `${cat.nombre} (Ingreso)`;
+    filtroSelect.appendChild(option);
+  });
+}
+}
+
+function renderizarTotalesMensuales(resumen) {
+  const contenedor = document.getElementById('resumen-mensual');
+  if (!contenedor) return;
+
+  contenedor.innerHTML = `
+    <h3>Resumen del mes</h3>
+    <p><strong>Ingresos:</strong> $${resumen.ingresos.toFixed(2)}</p>
+    <p><strong>Gastos:</strong> $${resumen.gastos.toFixed(2)}</p>
+    <h4>Por categoría:</h4>
+    <ul>
+      ${Object.entries(resumen.porCategoria).map(([cat, monto]) =>
+        `<li>${cat}: $${monto.toFixed(2)}</li>`
+      ).join('')}
+    </ul>
+  `;
+}
+
+function renderizarGraficoCategorias(resumen) {
+  const canvas = document.getElementById('grafico-categorias');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+
+  if (graficoCategorias) {
+    graficoCategorias.destroy();
+  }
+
+  // Guardamos la configuración para poder reusar en resize
+  ultimaConfigGrafico = {
+    type: 'bar',
+    data: {
+      labels: Object.keys(resumen.porCategoria),
+      datasets: [{
+        label: 'Monto por categoría',
+        data: Object.values(resumen.porCategoria),
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  };
+
+  graficoCategorias = new Chart(ctx, ultimaConfigGrafico);
+}
+
+function calcularResumenDesdeMovimientos(movimientos) {
+  const resumen = {
+    ingresos: 0,
+    gastos: 0,
+    porCategoria: {}
+  };
+
+  movimientos.forEach(mov => {
+    const monto = parseFloat(mov.monto);
+    const tipo = mov.tipo.toLowerCase();
+
+    if (tipo === 'ingreso') resumen.ingresos += monto;
+    else if (tipo === 'gasto') resumen.gastos += monto;
+
+    const clave = mov.categoria;
+    if (!resumen.porCategoria[clave]) resumen.porCategoria[clave] = 0;
+    resumen.porCategoria[clave] += monto;
+  });
+
+  return resumen;
 }
 
 document.getElementById('categoria').addEventListener('change', function () {
@@ -116,3 +224,39 @@ document.getElementById('categoria').addEventListener('change', function () {
   }
 });
 
+document.getElementById('btn-aplicar-filtros').addEventListener('click', async () => {
+  const fechaInicio = document.getElementById('filtro-fecha-inicio').value;
+  const fechaFin = document.getElementById('filtro-fecha-fin').value;
+  const tipo = document.getElementById('filtro-tipo').value;
+  const categoria = document.getElementById('filtro-categoria').value;
+
+  const movimientos = await cargarGastos(usuarioActual.uid);
+
+  const filtrados = movimientos.filter(mov => {
+    const fechaMov = new Date(mov.fecha);
+    const cumpleFechaInicio = fechaInicio ? fechaMov >= new Date(fechaInicio) : true;
+    const cumpleFechaFin = fechaFin ? fechaMov <= new Date(fechaFin) : true;
+    const cumpleTipo = tipo ? mov.tipo === tipo : true;
+    const cumpleCategoria = categoria ? mov.categoria === categoria : true;
+    return cumpleFechaInicio && cumpleFechaFin && cumpleTipo && cumpleCategoria;
+  });
+
+  renderizarMovimientos(filtrados);
+  const resumenFiltrado = calcularResumenDesdeMovimientos(filtrados);
+  renderizarTotalesMensuales(resumenFiltrado);
+  renderizarGraficoCategorias(resumenFiltrado);
+});
+
+window.addEventListener('resize', () => {
+  if (ultimaConfigGrafico) {
+    const canvas = document.getElementById('grafico-categorias');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (graficoCategorias) {
+      graficoCategorias.destroy();
+    }
+
+    graficoCategorias = new Chart(ctx, ultimaConfigGrafico);
+  }
+});
