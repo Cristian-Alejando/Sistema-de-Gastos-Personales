@@ -3,71 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <title>Categorías - Gastos Personales</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-
-    input, select, button {
-      margin-top: 5px;
-      margin-bottom: 15px;
-      padding: 8px;
-      font-size: 1rem;
-      width: 100%;
-      max-width: 400px;
-    }
-
-    table {
-      width: 100%;
-      max-width: 600px;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      text-align: left;
-    }
-
-    #mensaje-categoria {
-      margin-top: 10px;
-      font-weight: bold;
-      color: green;
-    }
-  </style>
+  <link rel="stylesheet" href="styles/categorias.css">
 </head>
 <body>
-  <button onclick="window.location.href='dashboard.html'" style="margin-bottom: 20px;">
+  <button onclick="window.location.href='dashboard.html'" class="btn-volver">
     ← Volver a gastos
   </button>
-
   <h1>Gestión de Categorías</h1>
-
   <section>
     <h2>Agregar nueva categoría</h2>
     <form id="form-categoria">
       <label for="nombre">Nombre:</label>
       <input type="text" id="nombre" placeholder="Ej. Comida, Transporte" required>
-
       <label for="tipo">Tipo:</label>
       <select id="tipo" required>
         <option value="">Selecciona tipo</option>
         <option value="Gasto">Gasto</option>
         <option value="Ingreso">Ingreso</option>
       </select>
-
       <button type="submit">Guardar Categoría</button>
     </form>
     <p id="mensaje-categoria"></p>
   </section>
-
   <section>
     <h2>Lista de Categorías</h2>
     <table>
@@ -77,10 +34,9 @@
           <th>Tipo</th>
         </tr>
       </thead>
-      <tbody id="tabla-categorias">
-        <!-- Aquí se cargan las filas dinámicamente -->
-      </tbody>
+      <tbody id="tabla-categorias"></tbody>
     </table>
   </section>
-<script type="module" src="../presentation/categorias.js"></script>
+  <script type="module" src="../presentation/categorias.js"></script>
+</body>
 </html>

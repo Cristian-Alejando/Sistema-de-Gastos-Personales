@@ -1,0 +1,90 @@
+/* styles/shared.css */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  margin-bottom: 1rem;
+}
+
+form {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+input,
+select {
+  display: block;
+  margin-bottom: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box; 
+}
+
+button {
+  padding: 0.75rem;
+  width: 100%;
+  background-color: #28a745;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+p {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.input-password-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.input-password-container input {
+  width: 100%;
+  padding-right: 40px;
+  box-sizing: border-box; /* para que padding no aumente el ancho */
+}
+
+.password-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+}
+
+.password-icon svg + svg {
+  display: none !important;
+}
+
+.password-icon::before,
+.password-icon::after {
+  content: none !important;
+  display: none !important;
+}
+

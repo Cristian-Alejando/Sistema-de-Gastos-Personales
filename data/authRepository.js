@@ -13,7 +13,6 @@ import { signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 import {onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-
 // Iniciar sesión
 export const loginUser = (email, password) => {
   return signInWithEmailAndPassword(auth, email, password);

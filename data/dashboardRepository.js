@@ -3,7 +3,8 @@ import { db } from './firebase-config.js';
 import { ref, push, onValue, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
 export function guardarGastoEnDB(gasto) {
-  const ruta = `usuarios/${gasto.uid}/movimientos`;
+  const tipoRuta = gasto.tipo.toLowerCase() === 'gasto' ? 'gastos' : 'ingresos';
+  const ruta = `usuarios/${gasto.uid}/movimientos/${tipoRuta}`;
   return push(ref(db, ruta), gasto);
 }
 
@@ -33,21 +34,39 @@ export function obtenerCategorias(uid) {
 
 export function obtenerGastos(uid) {
   return new Promise((resolve, reject) => {
-    const gastosRef = ref(db, `usuarios/${uid}/movimientos`);
+    const refGastos = ref(db, `usuarios/${uid}/movimientos/gastos`);
+    const refIngresos = ref(db, `usuarios/${uid}/movimientos/ingresos`);
 
-    onValue(gastosRef, (snapshot) => {
+    const resultados = [];
+
+    let pendientes = 2;
+
+    const revisarFinal = () => {
+      pendientes--;
+      if (pendientes === 0) resolve(resultados);
+    };
+
+    onValue(refGastos, (snapshot) => {
       if (snapshot.exists()) {
-        const movimientos = Object.entries(snapshot.val()).map(([id, data]) => ({
+        const gastos = Object.entries(snapshot.val()).map(([id, data]) => ({
           id,
-          ...data,
+          ...data
         }));
-        resolve(movimientos);
-      } else {
-        resolve([]); // No hay datos
+        resultados.push(...gastos);
       }
-    }, (error) => {
-      reject(error);
-    }, { onlyOnce: true });
+      revisarFinal();
+    }, (error) => reject(error), { onlyOnce: true });
+
+    onValue(refIngresos, (snapshot) => {
+      if (snapshot.exists()) {
+        const ingresos = Object.entries(snapshot.val()).map(([id, data]) => ({
+          id,
+          ...data
+        }));
+        resultados.push(...ingresos);
+      }
+      revisarFinal();
+    }, (error) => reject(error), { onlyOnce: true });
   });
 }
 

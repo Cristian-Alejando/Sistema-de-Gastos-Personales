@@ -3,25 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard - Gastos</title>
-  <style>
-    .table-bordered {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    .table-bordered, .table-bordered th, .table-bordered td {
-      border: 1px solid black;
-    }
-      .grafico-wrapper {
-    max-width: 50%;
-    margin: 0 auto;
-  }
-
-  @media (max-width: 768px) {
-    .grafico-wrapper {
-      max-width: 100%;
-    }
-  }
-  </style>
+  <link rel="stylesheet" href="styles/dashboard.css">
 </head>
 <body>
   <h1>Bienvenido</h1>
@@ -41,30 +23,38 @@
 
   <p id="mensaje-gasto"></p>
 
-  <!-- Filtros -->
+  <h2>Mis gastos</h2>
+<h3 id="toggle-filtros" class="active">
+  Filtros <span id="filtro-icono">⯆</span>
+</h3>
+
 <section id="filtros" class="mb-4">
-<label for="filtro-fecha-inicio">Desde:</label>
-<input type="date" id="filtro-fecha-inicio" />
+  <label for="filtro-fecha-inicio">Desde:</label>
+  <input type="date" id="filtro-fecha-inicio" />
 
-<label for="filtro-fecha-fin">Hasta:</label>
-<input type="date" id="filtro-fecha-fin" />
+  <label for="filtro-fecha-fin">Hasta:</label>
+  <input type="date" id="filtro-fecha-fin" />
 
-<label for="filtro-tipo">Tipo:</label>
-<select id="filtro-tipo">
-  <option value="">Todos</option>
-  <option value="Gasto">Gasto</option>
-  <option value="Ingreso">Ingreso</option>
-</select>
+  <label for="filtro-tipo">Tipo:</label>
+  <select id="filtro-tipo">
+    <option value="">Todos</option>
+    <option value="Gasto">Gasto</option>
+    <option value="Ingreso">Ingreso</option>
+  </select>
 
-<label for="filtro-categoria">Categoría:</label>
-<select id="filtro-categoria">
-  <option value="">Todas</option>
-</select>
+  <label for="filtro-categoria">Categoría:</label>
+  <select id="filtro-categoria">
+    <option value="">Todas</option>
+  </select>
 
-<button id="btn-aplicar-filtros">Aplicar Filtros</button>
+  <button id="btn-aplicar-filtros">Aplicar Filtros</button>
+  <button id="btn-limpiar-filtros">🧹 Limpiar filtros</button>
 </section>
 
-  <h2>Mis gastos</h2>
+<div id="controles-orden">
+  <button id="orden-fecha">Ordenar por fecha ⬍</button>
+  <button id="orden-monto">Ordenar por monto ⬍</button>
+</div>
   <table class="table-bordered">
     <thead>
       <tr>
@@ -74,6 +64,7 @@
         <th>Categoría</th>
       </tr>
     </thead>
+
     <tbody id="tabla-gastos">
       <!-- Los gastos se insertan aquí -->
     </tbody>
@@ -84,7 +75,7 @@
 </section>
 
 <section class="grafico-container">
-  <h2>Gráfico de gastos por categoría (mes actual)</h2>
+  <h2>Gráficos por filtros</h2>
   <div class="grafico-wrapper">
     <canvas id="grafico-categorias"></canvas>
   </div>
@@ -92,5 +83,24 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="module" src="../presentation/dashboard.js"></script>
+<script>
+const toggleBtn = document.getElementById('toggle-filtros');
+const filtros = document.getElementById('filtros');
+
+function actualizarIcono() {
+  if (filtros.classList.contains('hidden')) {
+    toggleBtn.classList.remove('active');
+  } else {
+    toggleBtn.classList.add('active');
+  }
+}
+
+toggleBtn.addEventListener('click', () => {
+  filtros.classList.toggle('hidden');
+  toggleBtn.classList.toggle('active');
+});
+
+actualizarIcono(); // Ejecutar al cargar para sincronizar
+</script>
 </body>
 </html>

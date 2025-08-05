@@ -5,19 +5,22 @@ import {
   saveUserInDatabase,
   loginUser as loginUserRepo
 } from "../data/authRepository.js";
+import { crearUsuario } from '../models/Usuario.js';
 
-export const register = async (email, password) => {
+export const register = async (email, password, nombre) => {
   try {
     const userCredential = await registerUser(email, password);
     const user = userCredential.user;
 
-    await saveUserInDatabase(user.uid, {
+    const usuarioFormateado = crearUsuario({
+      uid: user.uid,
       email: user.email,
+      nombre: nombre,
       creadoEn: new Date().toISOString()
     });
 
+    await saveUserInDatabase(user.uid, usuarioFormateado);
     await sendVerificationEmail(user);
-
     return user;
   } catch (error) {
     throw error;
