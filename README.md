@@ -17,3 +17,6 @@ Agregados mensuales para dashboard.
 
 -Objetivo técnico:
 Evaluar procesamiento de datos, agregación y visualización (opcional).
+
+## 🔗 Enlace a la aplicación
+👉 **[Ver app en línea](https://gastos-personales-b2e5b.web.app)**
